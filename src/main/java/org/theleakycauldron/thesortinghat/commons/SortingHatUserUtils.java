@@ -10,7 +10,7 @@ public class SortingHatUserUtils {
 
     public static SortingHatResponseDTO convertToSortingHatResponseDTO(String name){
         return SortingHatResponseDTO.builder()
-                .message("Hey " + name + "!, Thank you for signing up! Please check your email to verify your account")
+                .message("Hey " + name + "!, Thanks for signing up!")
                 .build();
     }
 

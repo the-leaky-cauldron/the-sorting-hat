@@ -1,5 +1,6 @@
 package org.theleakycauldron.thesortinghat.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class SortingHatController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<SortingHatResponseDTO> registration(@RequestBody @Valid SortingHatRequestDTO requestDTO){
+    public ResponseEntity<SortingHatResponseDTO> registration(@RequestBody @Valid SortingHatRequestDTO requestDTO) throws JsonProcessingException {
         String name = requestDTO.getFirstName() + " " + requestDTO.getLastName();
         String email = requestDTO.getEmail();
         String password = requestDTO.getPassword();
