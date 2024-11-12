@@ -1,15 +1,17 @@
 package org.theleakycauldron.thesortinghat.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.theleakycauldron.thesortinghat.commons.SortingHatUserUtils;
 import org.theleakycauldron.thesortinghat.dtos.SortingHatRequestDTO;
+import org.theleakycauldron.thesortinghat.dtos.SortingHatResponseDTO;
 import org.theleakycauldron.thesortinghat.services.SortingHatService;
 
 import java.util.Optional;
-import java.util.OptionalInt;
 
 /**
  * @author: Vijaysurya Mandala
@@ -19,7 +21,7 @@ import java.util.OptionalInt;
 @RestController
 public class SortingHatController {
 
-    private SortingHatService sortingHatService;
+    private final SortingHatService sortingHatService;
 
 
     @Autowired
@@ -27,9 +29,14 @@ public class SortingHatController {
         this.sortingHatService  = sortingHatService;
     }
 
-    @PostMapping
-    public ResponseEntity<String> registration(@RequestBody SortingHatRequestDTO requestDTO){
-        return ResponseEntity.of(Optional.of(""));
+    @PostMapping("/signup")
+    public ResponseEntity<SortingHatResponseDTO> registration(@RequestBody @Valid SortingHatRequestDTO requestDTO){
+        String name = requestDTO.getFirstName() + " " + requestDTO.getLastName();
+        String email = requestDTO.getEmail();
+        String password = requestDTO.getPassword();
+        String phoneNumber = requestDTO.getPhoneNumber();
+        SortingHatResponseDTO responseDTO = SortingHatUserUtils.convertToSortingHatResponseDTO(sortingHatService.registerUser(name, email, password, phoneNumber));
+        return ResponseEntity.of(Optional.of(responseDTO));
     }
 
 }
