@@ -27,21 +27,17 @@ public class SortingHatServiceImpl implements SortingHatService {
 
     private final SortingHatUserRepository userRepository;
     private final SortingHatRoleRepository roleRepository;
-    private final KafkaTemplate<String, SortingHatUserSignUpEmailDTO> kafkaTemplate;
-    private final ObjectMapper objectMapper;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Autowired
     public SortingHatServiceImpl(
             SortingHatUserRepository userRepository,
             SortingHatRoleRepository roleRepository,
-//            KafkaTemplate<String, String> kafkaTemplate,
-            KafkaTemplate<String, SortingHatUserSignUpEmailDTO> kafkaTemplate,
-            ObjectMapper objectMapper
+            KafkaTemplate<String, String> kafkaTemplate
     ) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.kafkaTemplate = kafkaTemplate;
-        this.objectMapper = objectMapper;
     }
     @Override
     public String registerUser(String name, String email, String password, String phoneNumber) throws JsonProcessingException {
@@ -74,9 +70,7 @@ public class SortingHatServiceImpl implements SortingHatService {
                 .name(name)
                 .email(email)
                 .build();
-//        String dto = objectMapper.writeValueAsString(sortingHatUserSignUpEmailDTO);
-//        kafkaTemplate.send("user-signup-email", dto);
-            kafkaTemplate.send("user-signup-email", sortingHatUserSignUpEmailDTO);
+        kafkaTemplate.send("user-signup-email", sortingHatUserSignUpEmailDTO.toString());
         return savedUser.getName();
     }
 }

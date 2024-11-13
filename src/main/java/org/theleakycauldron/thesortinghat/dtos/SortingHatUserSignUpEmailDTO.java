@@ -1,9 +1,6 @@
 package org.theleakycauldron.thesortinghat.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author: Vijaysurya Mandala
@@ -13,6 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
+@ToString
 public class SortingHatUserSignUpEmailDTO {
     private String name;
     private String email;
