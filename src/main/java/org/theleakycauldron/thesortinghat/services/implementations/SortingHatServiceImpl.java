@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.theleakycauldron.thesortinghat.dtos.SortingHatLoginResponseDTO;
 import org.theleakycauldron.thesortinghat.entities.LoginToken;
+import org.theleakycauldron.thesortinghat.entities.User;
 import org.theleakycauldron.thesortinghat.repositories.SortingHatTokenRepository;
+import org.theleakycauldron.thesortinghat.repositories.SortingHatUserRepository;
 import org.theleakycauldron.thesortinghat.services.SortingHatService;
 
 import javax.crypto.SecretKey;
@@ -32,6 +35,7 @@ import static java.sql.Timestamp.valueOf;
 public class SortingHatServiceImpl implements SortingHatService {
 
     private final SortingHatTokenRepository sortingHatTokenRepository;
+    private final SortingHatUserRepository sortingHatUserRepository;
     @Value("${jwt.secret}")
     private String secret;
     private SecretKey key;
@@ -43,29 +47,33 @@ public class SortingHatServiceImpl implements SortingHatService {
     }
 
     public SortingHatServiceImpl(
-            SortingHatTokenRepository sortingHatTokenRepository
+            SortingHatTokenRepository sortingHatTokenRepository,
+            SortingHatUserRepository sortingHatUserRepository
     ){
         this.sortingHatTokenRepository = sortingHatTokenRepository;
+        this.sortingHatUserRepository = sortingHatUserRepository;
     }
 
     @Override
     public SortingHatLoginResponseDTO login(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (String) authentication.getPrincipal();
-        List<String> authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-        LoginToken token = createToken(username, authorities);
+        String username = authentication.getName();
+        System.out.println(username);
+        LoginToken token = createToken(username);
+        User user = sortingHatUserRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
         sortingHatTokenRepository.save(token);
-        // TODO: Post merging add name and phone number to response
         return SortingHatLoginResponseDTO.builder()
+                .name(user.getName())
+                .phoneNumber(user.getPhoneNumber())
                 .email(username)
                 .token(token.getToken())
                 .build();
     }
 
-    private LoginToken createToken(String username, List<String> authorities){
+    private LoginToken createToken(String username){
         Map<String, String> claims = new HashMap<>();
         claims.put("email", username);
-        claims.put("role", String.join(",", authorities));
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiryTime = now.plusDays(10);
         String token = Jwts.builder()
