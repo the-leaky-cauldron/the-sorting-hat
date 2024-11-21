@@ -1,7 +1,21 @@
 package org.theleakycauldron.thesortinghat.services.implementations;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.theleakycauldron.thesortinghat.dtos.SortingHatUserSignUpEmailDTO;
+import org.theleakycauldron.thesortinghat.entities.Role;
+import org.theleakycauldron.thesortinghat.entities.User;
+import org.theleakycauldron.thesortinghat.repositories.SortingHatRoleRepository;
+import org.theleakycauldron.thesortinghat.repositories.SortingHatUserRepository;
 import org.theleakycauldron.thesortinghat.services.SortingHatService;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author: Vijaysurya Mandala
@@ -11,4 +25,52 @@ import org.theleakycauldron.thesortinghat.services.SortingHatService;
 @Service
 public class SortingHatServiceImpl implements SortingHatService {
 
+    private final SortingHatUserRepository userRepository;
+    private final SortingHatRoleRepository roleRepository;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    public SortingHatServiceImpl(
+            SortingHatUserRepository userRepository,
+            SortingHatRoleRepository roleRepository,
+            KafkaTemplate<String, String> kafkaTemplate
+    ) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.kafkaTemplate = kafkaTemplate;
+    }
+    @Override
+    public String registerUser(String name, String email, String password, String phoneNumber) throws JsonProcessingException {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        Optional<Role> roleOptional = roleRepository.findByName("USER");
+        if(userOptional.isPresent()){
+            // TODO: Convert this to custom exception. Incorporate Controller Advice
+            throw new RuntimeException("User already exists");
+        }
+        if(roleOptional.isEmpty()){
+            // TODO: Convert this to custom exception. Incorporate Controller Advice
+            throw new RuntimeException("Role not found");
+        }
+        List<Role> roleList = new ArrayList<>();
+        roleList.add(roleOptional.get());
+        LocalDateTime now = LocalDateTime.now();
+        User user = User.builder()
+                .name(name)
+                .email(email)
+                .password(password)
+                .phoneNumber(phoneNumber)
+                .role(roleList)
+                .createdAt(now)
+                .updatedAt(now)
+                .isDeleted(false)
+                .build();
+        User savedUser = userRepository.save(user);
+        SortingHatUserSignUpEmailDTO sortingHatUserSignUpEmailDTO = SortingHatUserSignUpEmailDTO
+                .builder()
+                .name(name)
+                .email(email)
+                .build();
+        kafkaTemplate.send("user-signup-email", sortingHatUserSignUpEmailDTO.toString());
+        return savedUser.getName();
+    }
 }
