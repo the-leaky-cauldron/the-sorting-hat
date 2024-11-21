@@ -2,7 +2,7 @@ package org.theleakycauldron.thesortinghat.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.theleakycauldron.thesortinghat.entities.User;
+import org.theleakycauldron.thesortinghat.entities.LoginToken;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -13,7 +13,6 @@ import java.util.UUID;
  */
 
 @Repository
-public interface SortingHatUserRepository extends JpaRepository<User, UUID> {
-    Optional<User> findByEmail(String email);
-    void deleteByEmail(String email);
+public interface SortingHatTokenRepository extends JpaRepository<LoginToken, UUID> {
+    Optional<LoginToken> findByToken(String token);
 }

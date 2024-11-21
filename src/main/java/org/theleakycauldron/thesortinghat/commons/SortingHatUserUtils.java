@@ -1,6 +1,7 @@
 package org.theleakycauldron.thesortinghat.commons;
 
 import org.theleakycauldron.thesortinghat.dtos.SortingHatResponseDTO;
+import org.theleakycauldron.thesortinghat.dtos.SortingHatLoginResponseDTO;
 
 /**
  * @author: Vijaysurya Mandala
@@ -13,5 +14,11 @@ public class SortingHatUserUtils {
                 .message("Hey " + name + "!, Thanks for signing up!")
                 .build();
     }
+    public static SortingHatLoginResponseDTO convertToLoginResponseDTO(String token, String username, String email) {
+        return SortingHatLoginResponseDTO.builder()
+                .name(username)
+                .email(username)
+                .build();
 
+    }
 }

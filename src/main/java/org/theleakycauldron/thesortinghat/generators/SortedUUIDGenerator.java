@@ -21,7 +21,7 @@ public class SortedUUIDGenerator implements IdentifierGenerator {
     }
 
     @Override
-    public Object generate(SharedSessionContractImplementor session, Object object) {
-        return timeBasedReorderedGenerator.generate();
-    }
+    public Object generate(SharedSessionContractImplementor sharedSessionContractImplementor, Object o) {
+        return timeBasedReorderedGenerator.generate();    }
+
 }
