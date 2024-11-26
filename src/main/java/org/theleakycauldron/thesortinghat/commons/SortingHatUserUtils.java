@@ -14,6 +14,11 @@ public class SortingHatUserUtils {
                 .message("Hey " + name + "!, Thanks for signing up!")
                 .build();
     }
+    public static SortingHatResponseDTO convertToGeneratePasswordLinkDTO(String message){
+        return SortingHatResponseDTO.builder()
+                .message(message)
+                .build();
+    }
     public static SortingHatLoginResponseDTO convertToLoginResponseDTO(String token, String username, String email) {
         return SortingHatLoginResponseDTO.builder()
                 .name(username)

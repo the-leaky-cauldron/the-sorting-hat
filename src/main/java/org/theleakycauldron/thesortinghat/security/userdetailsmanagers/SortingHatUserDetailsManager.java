@@ -50,7 +50,6 @@ public class SortingHatUserDetailsManager implements CustomUserDetailsManager {
         user1.setEmail(user.getUsername());
         user1.setPassword(user.getPassword());
         sortingHatUserRepository.save(user1);
-
     }
 
     @Override

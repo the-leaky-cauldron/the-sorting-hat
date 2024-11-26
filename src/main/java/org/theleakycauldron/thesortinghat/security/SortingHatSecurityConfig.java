@@ -37,12 +37,11 @@ public class SortingHatSecurityConfig {
                 .authorizeHttpRequests(
                         authorize -> {
                             authorize
-                                    .requestMatchers("/signup")
+                                    .requestMatchers("/signup", "/password")
                                     .permitAll()
                                     .anyRequest()
                                     .authenticated();
                         }
-
                 )
                 .authenticationProvider(getCustomAuthenticationProvider())
                 .formLogin(AbstractHttpConfigurer::disable)
