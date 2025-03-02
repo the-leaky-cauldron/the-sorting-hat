@@ -3,7 +3,6 @@ package org.theleakycauldron.thesortinghat.generators;
 import com.fasterxml.uuid.impl.TimeBasedReorderedGenerator;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 public class SortedUUIDGenerator implements IdentifierGenerator {
     private  final TimeBasedReorderedGenerator timeBasedReorderedGenerator;
 
-    @Autowired
     public SortedUUIDGenerator(TimeBasedReorderedGenerator timeBasedReorderedGenerator){
         this.timeBasedReorderedGenerator = timeBasedReorderedGenerator;
     }

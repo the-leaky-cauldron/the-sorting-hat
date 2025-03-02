@@ -1,7 +1,6 @@
 package org.theleakycauldron.thesortinghat.services.implementations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.theleakycauldron.thesortinghat.dtos.SortingHatUserSignUpEmailDTO;
@@ -40,7 +39,6 @@ import static java.sql.Timestamp.valueOf;
 public class SortingHatServiceImpl implements SortingHatService {
 
     private final SortingHatUserRepository userRepository;
-    private final SortingHatRoleRepository roleRepository;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final SortingHatTokenRepository sortingHatTokenRepository;
     private final SortingHatUserRepository sortingHatUserRepository;
@@ -48,7 +46,6 @@ public class SortingHatServiceImpl implements SortingHatService {
     private String secret;
     private SecretKey key;
 
-    @Autowired
     public SortingHatServiceImpl(
             SortingHatUserRepository userRepository,
             SortingHatRoleRepository roleRepository,
@@ -57,7 +54,6 @@ public class SortingHatServiceImpl implements SortingHatService {
             SortingHatUserRepository sortingHatUserRepository
     ) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.kafkaTemplate = kafkaTemplate;
         this.sortingHatTokenRepository = sortingHatTokenRepository;
         this.sortingHatUserRepository = sortingHatUserRepository;

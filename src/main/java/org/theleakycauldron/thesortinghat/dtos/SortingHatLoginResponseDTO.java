@@ -3,7 +3,6 @@ package org.theleakycauldron.thesortinghat.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author: Vijaysurya Mandala

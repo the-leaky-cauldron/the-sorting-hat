@@ -1,5 +1,8 @@
 package org.theleakycauldron.thesortinghat.security;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -7,15 +10,11 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.theleakycauldron.thesortinghat.security.userdetailsmanagers.CustomUserDetailsManager;
 
-import javax.sql.DataSource;
 
 /**
  * @author: Vijaysurya Mandala
@@ -37,8 +36,11 @@ public class SortingHatSecurityConfig {
                 .authorizeHttpRequests(
                         authorize -> {
                             authorize
-                                    .requestMatchers("/signup")
-                                    .permitAll()
+                                    .requestMatchers("/signup", "/swagger-ui/**").permitAll()
+                                    .requestMatchers("/swagger-ui.html").permitAll()
+                                    .requestMatchers("/v3/api-docs/**").permitAll()
+                                    .requestMatchers("/swagger-resources/**").permitAll()
+                                    .requestMatchers("/webjars/**").permitAll()
                                     .anyRequest()
                                     .authenticated();
                         }
@@ -60,6 +62,11 @@ public class SortingHatSecurityConfig {
 
     @Bean
     public PasswordEncoder getPasswordEncoder(){
-        return NoOpPasswordEncoder.getInstance();
+
+        Map<String, PasswordEncoder> encodersMap = new HashMap<>();
+        encodersMap.put("noop", NoOpPasswordEncoder.getInstance());
+        return encodersMap.get("noop");
+
     }
+
 }

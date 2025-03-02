@@ -1,7 +1,6 @@
 package org.theleakycauldron.thesortinghat.security.userdetailsmanagers;
 
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +23,6 @@ public class SortingHatUserDetailsManager implements CustomUserDetailsManager {
 
     private final SortingHatUserRepository sortingHatUserRepository;
 
-    @Autowired
     public SortingHatUserDetailsManager(SortingHatUserRepository sortingHatUserRepository) {
         this.sortingHatUserRepository = sortingHatUserRepository;
     }
