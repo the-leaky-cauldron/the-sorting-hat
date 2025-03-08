@@ -115,7 +115,7 @@ public class SortingHatServiceImpl implements SortingHatService {
         LocalDateTime expiryTime = now.plusDays(10);
         String token = Jwts.builder()
                 .claims(claims)
-                .expiration(valueOf(now))
+                .expiration(valueOf(expiryTime))
                 .issuedAt(valueOf(now))
                 .signWith(key)
                 .compact();

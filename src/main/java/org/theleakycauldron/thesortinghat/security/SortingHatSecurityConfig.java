@@ -36,7 +36,7 @@ public class SortingHatSecurityConfig {
                 .authorizeHttpRequests(
                         authorize -> {
                             authorize
-                                    .requestMatchers("/signup", "/swagger-ui/**").permitAll()
+                                    .requestMatchers("thesortinghat/signup", "/swagger-ui/**").permitAll()
                                     .requestMatchers("/swagger-ui.html").permitAll()
                                     .requestMatchers("/v3/api-docs/**").permitAll()
                                     .requestMatchers("/swagger-resources/**").permitAll()
