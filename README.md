@@ -1,9 +1,11 @@
 # The Sorting Hat
 
 ## Overview
+
 The Sorting Hat is a Spring Boot application that provides authentication and authorization services. Named after the magical artifact from the Harry Potter universe, this service handles user registration, login, and token management for the Diagon Alley system.
 
 ## Features
+
 - User registration and signup
 - Secure login with JWT token authentication
 - User management (update, delete)
@@ -12,6 +14,7 @@ The Sorting Hat is a Spring Boot application that provides authentication and au
 - API documentation with Swagger/OpenAPI
 
 ## Tech Stack
+
 - Java 17
 - Spring Boot 3.4.2
 - Spring Security
@@ -22,6 +25,7 @@ The Sorting Hat is a Spring Boot application that provides authentication and au
 - Swagger/OpenAPI for API documentation
 
 ## Prerequisites
+
 - JDK 17 or higher
 - Maven 3.8+
 - PostgreSQL 13+
@@ -44,48 +48,59 @@ The Sorting Hat is a Spring Boot application that provides authentication and au
 
 2. Install PostgreSQL ─ I have ran this docker-compose file to spin up ```Postgres``` and ```PgAdmin```
 
-```yml
-    services:
-        postgresdb:
-            container_name: postgrescontainer
-            image: postgres:16.1
-            restart: always
-            environment:
-                POSTGRES_USER: ${POSTGRES_USER}
-                POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-                POSTGRES_DB: ${POSTGRES_DB}
-            expose:
-                - 5432
-            ports:
-                - 5432:5432
+    ```yml
+        services:
+            postgresdb:
+                container_name: postgrescontainer
+                image: postgres:16.1
+                restart: always
+                environment:
+                    POSTGRES_USER: ${POSTGRES_USER}
+                    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+                    POSTGRES_DB: ${POSTGRES_DB}
+                expose:
+                    - 5432
+                ports:
+                    - 5432:5432
+                volumes:
+                    - postgresvolume:/var/lib/postgresql/data
+                - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+            pgadmin:
+                container_name: pgadmincontainer
+                image: dpage/pgadmin4:latest
+                restart: always
+                environment:
+                    PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+                    PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+                    PGADMIN_DEFAULT_ADDRESS: 6000
+                    PGADMIN_LISTEN_PORT: 6000
+                expose:
+                    - 6000
+                ports:
+                    - 7000:6000
+                volumes:
+                    - pgadminvolume:/var/lib/pgadmin
+
             volumes:
-                - postgresvolume:/var/lib/postgresql/data
-            - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+                pgadminvolume:
+                postgresvolume:
+    ```
 
-        pgadmin:
-            container_name: pgadmincontainer
-            image: dpage/pgadmin4:latest
-            restart: always
-            environment:
-                PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
-                PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
-                PGADMIN_DEFAULT_ADDRESS: 6000
-                PGADMIN_LISTEN_PORT: 6000
-            expose:
-                - 6000
-            ports:
-                - 7000:6000
-            volumes:
-                - pgadminvolume:/var/lib/pgadmin
+3. Install Kafka ─ I have followed this [link](https://hub.docker.com/r/bitnami/kafka) to install kafka in docker
 
-        volumes:
-            pgadminvolume:
-            postgresvolume:
-```
-
-3. Install Kafka
-
-─ I have followed this [link](https://hub.docker.com/r/bitnami/kafka) to install kafka in docker
+    ```sh
+    docker run -d --name kafka-server \
+        -p 9092:9092 --network app-tier \
+        -e KAFKA_CFG_NODE_ID=0 \
+        -e KAFKA_CFG_PROCESS_ROLES=controller,broker \
+        -e KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 \
+        -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 \
+        -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT \
+        -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-server:9093 \
+        -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER \
+        bitnami/kafka:latest
+    ```
 
 ### Environment Variables
 
@@ -129,53 +144,32 @@ $env:DB_PASS="your_database_password"
 $env:JWT_SECRET="your_jwt_secret_key"
 ```
 
-You can also create a `.env` file for Docker Compose:
-
-```
-
-# Database Configuration
-POSTGRES_USER=your_db_username
-POSTGRES_PASSWORD=your_db_password
-POSTGRES_DB=hogwards_records
-DB_USER=your_db_username
-DB_PASS=your_db_password
-
-# JWT Configuration
-JWT_SECRET=your_jwt_secret_key
-
-# PGAdmin Configuration
-PGADMIN_EMAIL=admin@example.com
-PGADMIN_PASSWORD=admin_password
-```
-
 ### Application Setup
 
 1. Clone the repository
 
    ```sh
-   git clone https://github.com/mandalavijaysurya/thesortinghat.git
-   cd thesortinghat
+        git clone https://github.com/the-leaky-cauldron/the-sorting-hat
+        cd thesortinghat
    ```
 
 2. Build the application
 
-   ```sh
-   ./mvnw clean package -DskipTests
-   ```
+    ```sh
+        ./mvnw clean package -DskipTests
+    ```
 
 3. Run the application
 
-```sh
-   # If using Maven
-    mvn spring-boot:run
+    ```sh
+        # If using Maven
+        mvn spring-boot:run
 
-    # If using Gradle
-    ./gradlew bootRun
-```
+        # If using Gradle
+        ./gradlew bootRun
+    ```
 
 The application will start on port 8081 by default.
-
-## Project Structure
 
 ## API Documentation
 
@@ -190,6 +184,6 @@ API endpoints are documented using Swagger/OpenAPI. After starting the server, v
 
 ## Contact
 
-**Project Maintainer:** [Vijaysurya Mandala](https://github.com/mandalavijaysurya)
-**Project Repository:** [GitHub](https://github.com/the-leaky-cauldron/the-sorting-hat)
-**Issue Tracker:** [GitHub Issues](https://github.com/the-leaky-cauldron/the-sorting-hat/issues)
+- Project Maintainer: [Vijaysurya Mandala](https://github.com/mandalavijaysurya)
+- Project Repository: [GitHub](https://github.com/the-leaky-cauldron/the-sorting-hat)
+- Issue Tracker: [GitHub Issues](https://github.com/the-leaky-cauldron/the-sorting-hat/issues)
